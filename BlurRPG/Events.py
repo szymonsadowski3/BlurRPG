@@ -1,19 +1,20 @@
 from Game import Engine
 from Monster import Monster
 import random
-import Utilities
+import Utilities as Util
 import NPC
 
 class Event(object):
-    def __init__(self, player):
+    def __init__(self, player, disappear_after_run=False):
         self.choices = []
         self.player = player
+        self.disappear_after_run = disappear_after_run
 
     def run(self):
         raise NotImplementedError('Subclass must implement abstract method')
 
     def print_choices(self):
-        Utilities.pprint_list(self.choices)
+        Util.pprint_list(self.choices)
         print()
         # for key, value in self.choices.items():
         #     print("%d. %s\n" % (key, value))
@@ -44,7 +45,7 @@ class MonsterFight(Event):
         return True if random.randint(0,100)+self.player.stats['agility']>=50 else False
 
     def run(self):
-        Utilities.clear()
+        Util.clear()
         print('Monster Attacked You!\n')
         monster = Monster(10, 80, 10, 5)
         flag_exit = False
@@ -54,15 +55,15 @@ class MonsterFight(Event):
             monster.print_status()
             print()
             self.print_choices()
-            choice = Utilities.get_numeric_safe('What are you going to do?: ')
-            Utilities.clear()
+            choice = Util.get_numeric_safe('What are you going to do?: ')
+            Util.clear()
             if choice<3:
                 flag_exit = self.fight(monster, choice)
             else:
                 if self.was_flee_successful():
-                    Utilities.slow_print('You successfully fled from battlefield .')
+                    Util.slow_print('You successfully fled from battlefield .')
                     return
-        Utilities.slow_print('You successfully defeated your enemy!\n')
+        Util.slow_print('You successfully defeated your enemy!\n')
 
 class Inn(Event):
     def __init__(self, player):
@@ -71,10 +72,10 @@ class Inn(Event):
         self.choice_to_function = {0: self.talk_to_bartender}
     def run(self):
         while True:
-            Utilities.clear()
+            Util.clear()
             print('You entered Inn!\n')
             self.print_choices()
-            choice = Utilities.get_numeric_or_default('Your choice: ', -1)
+            choice = Util.get_numeric_or_default('Your choice: ', -1)
             func_to_call = self.choice_to_function.get(choice, None)
             if choice!=-1 and func_to_call:
                 func_to_call()
@@ -84,6 +85,28 @@ class Inn(Event):
     def talk_to_bartender(self):
         bartender = NPC.basic_bartender(self.player)
         bartender.perform()
+
+class DisappearingNPC(Event):
+    def __init__(self, player):
+        super(DisappearingNPC, self).__init__(player, disappear_after_run=True)
+        self.choices.append('Approach')
+        self.choice_to_function = {0: self.talk}
+    def run(self):
+        while True:
+            Util.clear()
+            print('You noticed weird stranger standing on the crossroads...\n')
+            self.print_choices()
+            choice = Util.get_numeric_or_default('Your choice: ', -1)
+            func_to_call = self.choice_to_function.get(choice, None)
+            if choice!=-1 and func_to_call:
+                func_to_call()
+                return
+
+    def talk(self):
+        Util.clear()
+        Util.slow_print('You approached this spooky fella...\n\n When you tried to greet him, the stranger lowered his eyes and told:\n')
+        Util.slow_print("'Vaporize as soon as possible not to meet with Banshee'\n")
+        Util.slow_print("Then he disappeared and only thin mist remained...\n")
 
 class Blank(Event):
     def run(self):

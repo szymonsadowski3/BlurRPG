@@ -56,7 +56,7 @@ def pprint_list(list):
         print("%d: %s" % (ind, val), end=ending)
     print('}')
 
-def slow_print(msg, typing_speed=130, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
+def slow_print(msg, typing_speed=1300, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
     for l in msg:
         sys.stdout.write(l)
         sys.stdout.flush()

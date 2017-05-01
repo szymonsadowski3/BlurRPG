@@ -60,7 +60,10 @@ class Game(object):
             if not Engine.is_direction_colliding(self.player, self.map, direction):
                 self.player.move(direction)
                 event = Engine.fetch_event_from_map(self.map, self.player)
+                going_to_disappear = event.disappear_after_run
                 event.run()
+                if going_to_disappear:
+                    self.map.clear_cell(self.player.position.y, self.player.position.x)
 
     def run_option_backpack(self):
         Util.clear()
@@ -86,7 +89,7 @@ class Game(object):
 
     def eq_replacement(self):
         slot = input(
-            '\nType in name of slot that you want to empty or replace or \n[slot_name empty] to take off from some slot: ')
+            '\nType in name of slot that you want to replace or \n[slot_name empty] to take off from some slot: ')
         if ' ' in slot and slot.split()[1] == 'empty':
             slot = slot.split()[0]
             if slot.lower() in self.player.equipment:
@@ -106,7 +109,12 @@ class Game(object):
                 if isinstance(item_to_add, classname):
                     self.player.equip_from_bp(slot.lower(), item_to_add)
                     Util.clear()
+                else:
+                    Util.slow_print('Something went wrong... You tried to equip wrong item type on wrong slot!')
+                    Util.clear()
             else:
+                Util.slow_print('You replaced items as desired.')
+                Util.clear()
                 return True
         else:
             return True
