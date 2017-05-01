@@ -7,7 +7,7 @@ import sys,time,random
 Position = recordclass('Position', 'x y')
 Direction = collections.namedtuple('Direction', 'dx dy')
 
-clear = lambda: os.system('cls')
+clear = lambda: os.system('clear')
 
 def get_numeric_safe(prompt):
     while True:

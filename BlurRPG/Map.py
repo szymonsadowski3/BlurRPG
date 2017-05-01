@@ -1,12 +1,12 @@
 import Events
 import Utilities
 
-class Map(object):
+class LocalMap(object):
     def __init__(self):
         self.map_array = []
         self.map_cell_to_event = {'M' : Events.MonsterFight, ' ' : Events.Blank, 'I' : Events.Inn}
 
-    def loadMapFromFile(self, path):
+    def load_map_from_file(self, path):
         with open(path) as f:
             for line in f:
                 list_made_from_line = line.rstrip('\n').split(',')
@@ -16,7 +16,7 @@ class Map(object):
         return('\n'.join([''.join(['{:4}'.format(item) for item in row])
                          for row in self.map_array]))
 
-    def printMapWithPlayer(self, player_position):
+    def print_map_with_player(self, player_position):
         Utilities.clear()
         old_cell = self[player_position.y][player_position.x]
         self[player_position.y][player_position.x] = 'P'

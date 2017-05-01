@@ -1,7 +1,7 @@
+#!/usr/bin/env python3.5
 from Player import Player
-from Map import *
-import Utilities
-from Utilities import *
+import Map
+import Utilities as Util
 import random
 import Items
 import importlib
@@ -10,10 +10,10 @@ class Engine(object):
     attitude_modifiers = {0: 0.7, 1: 1, 2: 1.3}  # attitude - 0 offensive, 1 - neutral, 2 - defensive
 
     direction_mapping = {
-        'W': Direction(dx=0, dy=-1),
-        'S': Direction(dx=0, dy=1),
-        'A': Direction(dx=-1, dy=0),
-        'D': Direction(dx=1, dy=0),
+        'W': Util.Direction(dx=0, dy=-1),
+        'S': Util.Direction(dx=0, dy=1),
+        'A': Util.Direction(dx=-1, dy=0),
+        'D': Util.Direction(dx=1, dy=0),
     }
 
     @classmethod
@@ -30,7 +30,7 @@ class Engine(object):
 
     @staticmethod
     def is_direction_colliding(player, map, direction):
-        return map.is_occupied(Position(x=player.position.x + direction.dx, y=player.position.y + direction.dy))
+        return map.is_occupied(Util.Position(x=player.position.x + direction.dx, y=player.position.y + direction.dy))
 
     @classmethod
     def measure_damage(cls, attacker, defender, attacker_attitude=1,
@@ -53,7 +53,7 @@ class Game(object):
     # OPTIONS
     def run_option_move(self):
         while True:
-            self.map.printMapWithPlayer(self.player.position)
+            self.map.print_map_with_player(self.player.position)
             direction = Engine.read_direction()
             if direction == 'exit_to_menu':
                 break
@@ -63,10 +63,10 @@ class Game(object):
                 event.run()
 
     def run_option_backpack(self):
-        clear()
-        slow_print('BACKPACK . \n')
+        Util.clear()
+        Util.slow_print('BACKPACK . \n')
         self.player.print_backpack()
-        choice = Utilities.get_numeric_in_range_or_default(
+        choice = Util.get_numeric_in_range_or_default(
             '\nType number of item you want to consume [0-...] or [anything else] to back: ', 0,
             len(self.player.backpack) - 1, -1)
         if choice == -1:
@@ -75,12 +75,12 @@ class Game(object):
             self.player.consume_item_from_backpack(choice)
 
     def run_option_eq(self):  # TODO REFACTOR
-        clear()
+        Util.clear()
         flag_exit = False
         while not flag_exit:
-            slow_print('EQUIPMENT . \n')
+            Util.slow_print('EQUIPMENT . \n')
             self.player.print_equipment()
-            slow_print('BACKPACK . \n')
+            Util.slow_print('BACKPACK . \n')
             self.player.print_backpack()
             flag_exit = self.eq_replacement()
 
@@ -90,14 +90,14 @@ class Game(object):
         if ' ' in slot and slot.split()[1] == 'empty':
             slot = slot.split()[0]
             if slot.lower() in self.player.equipment:
-                slow_print('You took off item you no longer desired to wear')
+                Util.slow_print('You took off item you no longer desired to wear')
                 self.player.takeoff_slot(slot)
                 return True
         if slot.lower() in self.player.equipment:
-            clear()
-            slow_print('BACKPACK . \n')
+            Util.clear()
+            Util.slow_print('BACKPACK . \n')
             self.player.print_backpack()
-            item_index = Utilities.get_numeric_or_default(
+            item_index = Util.get_numeric_or_default(
                 '[%s] Type in index of item that you want to equip: ' % slot.lower(), -1)
             if item_index != -1 and item_index < len(self.player.backpack):
                 item_to_add = self.player.backpack[item_index]
@@ -105,7 +105,7 @@ class Game(object):
                 classname = getattr(importlib.import_module("Items"), slot_name_to_classname)
                 if isinstance(item_to_add, classname):
                     self.player.equip_from_bp(slot.lower(), item_to_add)
-                    clear()
+                    Util.clear()
             else:
                 return True
         else:
@@ -113,17 +113,17 @@ class Game(object):
         return False
 
     def title(self):
-        Utilities.slow_print('BLUR .', typing_speed=20)
+        Util.slow_print('BLUR .', typing_speed=20)
 
     def player_initialization(self):
-        Utilities.slow_print(
+        Util.slow_print(
             '\nYou wake up barely feeling any member of your body. \nApparently, you have been dreaming for a long time, paralyzed...')
-        Utilities.slow_print('\n\nYou stood up on your feet and got rid of every particle hidden in your dry eyes.')
-        Utilities.slow_print('\n\nYou realized that you are in the middle of some wild beach.')
-        Utilities.slow_print('\n\nFirstly, you decided to do some mind exercise. \nAfter long period you remembered your name and wrote it on sand using twig \n[TYPE IN YOUR NAME]: ', endline=False)
+        Util.slow_print('\n\nYou stood up on your feet and got rid of every particle hidden in your dry eyes.')
+        Util.slow_print('\n\nYou realized that you are in the middle of some wild beach.')
+        Util.slow_print('\n\nFirstly, you decided to do some mind exercise. \nAfter long period you remembered your name and wrote it on sand using twig \n[TYPE IN YOUR NAME]: ', endline=False)
         name = input()
-        self.player = Player(name, Position(x=1, y=0))
-        clear()
+        self.player = Player(name, Util.Position(x=1, y=0))
+        Util.clear()
 
     def player_starting_cfg(self):
         self.player.put_on_eq_item(Items.sword_of_oblivion, 'weapon')
@@ -132,24 +132,24 @@ class Game(object):
 
     def __init__(self):
         self.player_options = ['Move', 'Backpack', 'Equipment']
-        self.map = Map()
-        self.map.loadMapFromFile('map.txt')
+        self.map = Map.LocalMap()
+        self.map.load_map_from_file('map.txt')
         self.title()
         self.player_initialization()
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
 
     def step(self):
-        clear()
+        Util.clear()
         self.player.print_status()
         print()
-        Utilities.pprint_list(self.player_options)
-        choice = Utilities.get_numeric_safe_in_range('\nYour choice: ', 0, len(self.player_options) - 1)
+        Util.pprint_list(self.player_options)
+        choice = Util.get_numeric_safe_in_range('\nYour choice: ', 0, len(self.player_options) - 1)
         self.player_options_to_function[choice]()
 
 
 if __name__ == "__main__":
-    clear()
+    Util.clear()
     game = Game()
     while True:
         game.step()
