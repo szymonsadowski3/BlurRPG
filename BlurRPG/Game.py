@@ -47,7 +47,7 @@ class Engine(object):
 
     @staticmethod
     def fetch_event_from_map(map, player):
-        return map.map_cell_to_event[map[player.position.y][player.position.x]](player)
+        return map.fetch_event(player)
 
 
 class Game(object):
@@ -135,9 +135,10 @@ class Game(object):
         Util.clear()
 
     def player_starting_cfg(self):
-        self.player.put_on_eq_item(Items.sword_of_oblivion, 'weapon')
+        pass
+        # self.player.put_on_eq_item(Items.sword_of_oblivion, 'weapon')
         # self.player.put_on_eq_item(Items.shadow_armor, 'armor')
-        self.player.add_item_to_backpack(Items.shadow_armor)
+        # self.player.add_item_to_backpack(Items.shadow_armor)
 
     def __init__(self):
         self.player_options = ['Move', 'Backpack', 'Equipment']
@@ -147,7 +148,7 @@ class Game(object):
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
 
-        self.list_of_chapters = [GameChapter.GameChapter(1), GameChapter.GameChapter(2)]
+        self.list_of_chapters = [GameChapter.GameChapter(self.player, 1), GameChapter.GameChapter(self.player, 2)]
 
     def step(self):
         Util.clear()

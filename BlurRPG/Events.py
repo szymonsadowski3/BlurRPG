@@ -20,17 +20,23 @@ class Event(object):
         #     print("%d. %s\n" % (key, value))
 
 class MonsterFight(Event):
+    def __init__(self, player, monster, allow_to_flee=True):
+        super(MonsterFight, self).__init__(player)
+        self.choices.extend(('Attack offensive', 'Attack neutral', 'Attack defensive'))
+
+        if allow_to_flee:
+            self.choices.append('Try to flee')
+
+        self.choice_to_method = {}
+        self.monster = monster
+        self.allow_to_flee = allow_to_flee
+
     def print_fight_message(self, attacker_name, defender_name, dmg):
         print("%s attacks %s causing %d damage!\n" % (attacker_name,defender_name,dmg))
 
     def print_choices(self):
         for ind, value in enumerate(self.choices):
             print("%d. %s\n" % (ind, value))
-
-    def __init__(self, player):
-        super(MonsterFight, self).__init__(player)
-        self.choices.extend(('Attack offensive', 'Attack neutral', 'Attack defensive', 'Try to flee'))
-        self.choice_to_method = {}
 
     def fight(self, monster, player_attitude):
         dmg = Engine.measure_damage(self.player, monster, player_attitude, defender_attitude=1)
@@ -46,19 +52,18 @@ class MonsterFight(Event):
 
     def run(self):
         Util.clear()
-        print('Monster Attacked You!\n')
-        monster = Monster(10, 80, 10, 5)
+        print('{} Attacked You!\n'.format(self.monster.name))
         flag_exit = False
         while not flag_exit:
             self.player.print_status()
             print()
-            monster.print_status()
+            self.monster.print_status()
             print()
             self.print_choices()
             choice = Util.get_numeric_safe('What are you going to do?: ')
             Util.clear()
             if choice<3:
-                flag_exit = self.fight(monster, choice)
+                flag_exit = self.fight(self.monster, choice)
             else:
                 if self.was_flee_successful():
                     Util.slow_print('You successfully fled from battlefield .')
@@ -70,6 +75,7 @@ class Inn(Event):
         super(Inn, self).__init__(player)
         self.choices.append('Talk to bartender')
         self.choice_to_function = {0: self.talk_to_bartender}
+
     def run(self):
         while True:
             Util.clear()

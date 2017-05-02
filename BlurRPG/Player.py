@@ -2,7 +2,7 @@ import Utilities
 
 class Player(object):
     def __init__(self, name, position):
-        self.stats = {'hp': 100, 'strength': 10, 'defence': 10, 'vitality': 100, 'agility': 10, 'money':3}
+        self.stats = {'hp': 100, 'strength': 10, 'defence': 10, 'vitality': 100, 'agility': 10, 'money': 3}
         self.position = position
         self.name = name
         self.backpack = []
