@@ -7,6 +7,7 @@ class Player(object):
         self.name = name
         self.backpack = []
         self.equipment = {'weapon': None, 'armor': None}
+        self.proceed_to_next_chapter = False
 
     def move(self, direction):
         self.position.x += direction.dx

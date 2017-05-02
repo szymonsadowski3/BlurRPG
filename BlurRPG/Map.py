@@ -4,7 +4,7 @@ import Utilities
 class LocalMap(object):
     def __init__(self):
         self.map_array = []
-        self.map_cell_to_event = {'M' : Events.MonsterFight, ' ' : Events.Blank, 'I' : Events.Inn, 'D' : Events.DisappearingNPC}
+        self.map_cell_to_event = {'M' : Events.MonsterFight, ' ' : Events.Blank, 'I' : Events.Inn, 'D' : Events.DisappearingBansheeWarner}
 
     def load_map_from_file(self, path):
         with open(path) as f:

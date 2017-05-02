@@ -5,6 +5,7 @@ import Utilities as Util
 import random
 import Items
 import importlib
+import GameChapter
 
 class Engine(object):
     attitude_modifiers = {0: 0.7, 1: 1, 2: 1.3}  # attitude - 0 offensive, 1 - neutral, 2 - defensive
@@ -52,18 +53,18 @@ class Engine(object):
 class Game(object):
     # OPTIONS
     def run_option_move(self):
-        while True:
-            self.map.print_map_with_player(self.player.position)
+        while not self.player.proceed_to_next_chapter:
+            self.current_map.print_map_with_player(self.player.position)
             direction = Engine.read_direction()
             if direction == 'exit_to_menu':
                 break
-            if not Engine.is_direction_colliding(self.player, self.map, direction):
+            if not Engine.is_direction_colliding(self.player, self.current_map, direction):
                 self.player.move(direction)
-                event = Engine.fetch_event_from_map(self.map, self.player)
+                event = Engine.fetch_event_from_map(self.current_map, self.player)
                 going_to_disappear = event.disappear_after_run
                 event.run()
                 if going_to_disappear:
-                    self.map.clear_cell(self.player.position.y, self.player.position.x)
+                    self.current_map.clear_cell(self.player.position.y, self.player.position.x)
 
     def run_option_backpack(self):
         Util.clear()
@@ -130,7 +131,7 @@ class Game(object):
         Util.slow_print('\n\nYou realized that you are in the middle of some wild beach.')
         Util.slow_print('\n\nFirstly, you decided to do some mind exercise. \nAfter long period you remembered your name and wrote it on sand using twig \n[TYPE IN YOUR NAME]: ', endline=False)
         name = input()
-        self.player = Player(name, Util.Position(x=1, y=0))
+        self.player = Player(name, Util.Position(x=0, y=0))
         Util.clear()
 
     def player_starting_cfg(self):
@@ -140,12 +141,13 @@ class Game(object):
 
     def __init__(self):
         self.player_options = ['Move', 'Backpack', 'Equipment']
-        self.map = Map.LocalMap()
-        self.map.load_map_from_file('map.txt')
+        self.current_map = None
         self.title()
         self.player_initialization()
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
+
+        self.list_of_chapters = [GameChapter.GameChapter(1), GameChapter.GameChapter(2)]
 
     def step(self):
         Util.clear()
@@ -157,7 +159,14 @@ class Game(object):
 
 
 if __name__ == "__main__":
+
     Util.clear()
     game = Game()
-    while True:
-        game.step()
+    for chapter in game.list_of_chapters:
+        game.player.proceed_to_next_chapter = False
+        Util.clear()
+        Util.slow_print(str(chapter), typing_speed=20)
+        game.current_map = chapter.map
+        game.player.position = chapter.init_player_position
+        while not game.player.proceed_to_next_chapter:
+            game.step()

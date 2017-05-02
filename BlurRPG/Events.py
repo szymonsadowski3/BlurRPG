@@ -86,11 +86,12 @@ class Inn(Event):
         bartender = NPC.basic_bartender(self.player)
         bartender.perform()
 
-class DisappearingNPC(Event):
+class DisappearingBansheeWarner(Event):
     def __init__(self, player):
-        super(DisappearingNPC, self).__init__(player, disappear_after_run=True)
+        super(DisappearingBansheeWarner, self).__init__(player, disappear_after_run=True)
         self.choices.append('Approach')
         self.choice_to_function = {0: self.talk}
+
     def run(self):
         while True:
             Util.clear()
@@ -100,6 +101,7 @@ class DisappearingNPC(Event):
             func_to_call = self.choice_to_function.get(choice, None)
             if choice!=-1 and func_to_call:
                 func_to_call()
+                self.player.proceed_to_next_chapter = True
                 return
 
     def talk(self):
