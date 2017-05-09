@@ -1,4 +1,5 @@
 import Utilities
+from Cfg import Cfg
 
 class Player(object):
     def __init__(self, name, position):
@@ -71,9 +72,9 @@ class Player(object):
         if self.stats['money'] >= item.info['cost']:
             self.stats['money'] -= item.info['cost']
             self.add_item_to_backpack(item)
-            Utilities.slow_print('You have purchased  %s...' % item.info['name'])
+            Utilities.slow_print(Cfg.get('PURCH') % item.info['name'])
         else:
-            print('Unfortunately, you do not have enough funds to purchase this item...')
+            print(Cfg.get('NO_FUNDS'))
 
     def equip_from_bp(self, slot_name, from_bp):
         item_removed = self.equipment[slot_name]

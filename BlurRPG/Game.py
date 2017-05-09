@@ -6,6 +6,8 @@ import random
 import Items
 import importlib
 import GameChapter
+from Cfg import Cfg
+
 
 class Engine(object):
     attitude_modifiers = {0: 0.7, 1: 1, 2: 1.3}  # attitude - 0 offensive, 1 - neutral, 2 - defensive
@@ -19,7 +21,7 @@ class Engine(object):
 
     @classmethod
     def read_direction(cls):
-        return cls.wsad_to_direction(input('\nType where to go [W|S|A|D] or anything else to back: ').upper())
+        return cls.wsad_to_direction(input('\n' + Cfg.get('CHOOSE_DIRECTION') + ' ').upper())
         # return self.str_to_dir(msvcrt.getch().decode('ASCII').upper())
 
     @classmethod
@@ -71,7 +73,7 @@ class Game(object):
         Util.slow_print('BACKPACK . \n')
         self.player.print_backpack()
         choice = Util.get_numeric_in_range_or_default(
-            '\nType number of item you want to consume [0-...] or [anything else] to back: ', 0,
+            '\n' + Cfg.get('CONSUMPTION') + ' ', 0,
             len(self.player.backpack) - 1, -1)
         if choice == -1:
             return
@@ -90,33 +92,34 @@ class Game(object):
 
     def eq_replacement(self):
         slot = input(
-            '\nType in name of slot that you want to replace or \n[slot_name empty] to take off from some slot: ')
+            '\n' + Cfg.getLines('REPLACEMENT')[0] + '\n' + Cfg.getLines('REPLACEMENT')[1] + ' ')
         if ' ' in slot and slot.split()[1] == 'empty':
             slot = slot.split()[0]
             if slot.lower() in self.player.equipment:
-                Util.slow_print('You took off item you no longer desired to wear')
+                Util.slow_print(Cfg.get('TAKE_OFF'))
                 self.player.takeoff_slot(slot)
                 return True
         if slot.lower() in self.player.equipment:
             Util.clear()
             Util.slow_print('BACKPACK . \n')
             self.player.print_backpack()
-            item_index = Util.get_numeric_or_default(
-                '[%s] Type in index of item that you want to equip: ' % slot.lower(), -1)
+            item_index = Util.get_numeric_safe_in_range(
+                Cfg.get('EQUIP') % slot.lower(), 0, len(self.player.backpack))
             if item_index != -1 and item_index < len(self.player.backpack):
                 item_to_add = self.player.backpack[item_index]
                 slot_name_to_classname = slot.lower().title()
                 classname = getattr(importlib.import_module("Items"), slot_name_to_classname)
                 if isinstance(item_to_add, classname):
                     self.player.equip_from_bp(slot.lower(), item_to_add)
+                    Util.slow_print(Cfg.get('REPLACEMENT_SUCCESS'))
                     Util.clear()
                 else:
-                    Util.slow_print('Something went wrong... You tried to equip wrong item type on wrong slot!')
+                    Util.slow_print(Cfg.get('WRONG_SLOT'))
                     Util.clear()
             else:
-                Util.slow_print('You replaced items as desired.')
+                Util.slow_print(Cfg.get('REPLACEMENT_FAIL'))
                 Util.clear()
-                return True
+                return False
         else:
             return True
         return False
@@ -125,11 +128,14 @@ class Game(object):
         Util.slow_print('BLUR .', typing_speed=20)
 
     def player_initialization(self):
-        Util.slow_print(
-            '\nYou wake up barely feeling any member of your body. \nApparently, you have been dreaming for a long time, paralyzed...')
-        Util.slow_print('\n\nYou stood up on your feet and got rid of every particle hidden in your dry eyes.')
-        Util.slow_print('\n\nYou realized that you are in the middle of some wild beach.')
-        Util.slow_print('\n\nFirstly, you decided to do some mind exercise. \nAfter long period you remembered your name and wrote it on sand using twig \n[TYPE IN YOUR NAME]: ', endline=False)
+        lines = Cfg.getLines('INIT')
+
+        for index, line in enumerate(lines):
+            if index != len(lines) - 1:
+                Util.slow_print(line)
+            else:
+                Util.slow_print(line + ' ', endline=False)
+
         name = input()
         self.player = Player(name, Util.Position(x=0, y=0))
         Util.clear()
@@ -141,7 +147,7 @@ class Game(object):
         # self.player.add_item_to_backpack(Items.shadow_armor)
 
     def __init__(self):
-        self.player_options = ['Move', 'Backpack', 'Equipment']
+        self.player_options = [Cfg.get('PL_MOVE'), Cfg.get('PL_BP'), Cfg.get('PL_EQ')]
         self.current_map = None
         self.title()
         self.player_initialization()
@@ -155,7 +161,8 @@ class Game(object):
         self.player.print_status()
         print()
         Util.pprint_list(self.player_options)
-        choice = Util.get_numeric_safe_in_range('\nYour choice: ', 0, len(self.player_options) - 1)
+        choice = Util.get_numeric_safe_in_range('\n' + Cfg.get('CHOICE') + ' ', 0,
+                                                len(self.player_options) - 1)
         self.player_options_to_function[choice]()
 
 

@@ -1,4 +1,5 @@
 import Utilities
+from Cfg import Cfg
 
 class Item(object):
     def __init__(self, name):
@@ -14,7 +15,7 @@ class Item(object):
 
     def using(self): #returns boolean informing if item has been actually consumed
         Utilities.clear()
-        Utilities.slow_print('You look at %s... This is certainly not consumable...' % self.info['name'])
+        Utilities.slow_print(Cfg.get('NOT_CONSUMABLE') % self.info['name'])
         return False
 
 
@@ -56,7 +57,7 @@ def basic_beer():
     beer.info['cost'] = 1
     def beer_usage():
         Utilities.clear()
-        Utilities.slow_print('As you pour this aureate liquid into your throat, you start to feel tiny noise in your head . . .')
+        Utilities.slow_print(Cfg.get('BEER_CONS'))
         return True
     beer.using = beer_usage
     return beer

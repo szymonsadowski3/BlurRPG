@@ -1,5 +1,6 @@
 import Map
 import Utilities as Util
+from Cfg import Cfg
 
 class GameChapter(object):
     def __init__(self, player, id, init_player_position = Util.Position(0,0), title=None):
@@ -12,5 +13,5 @@ class GameChapter(object):
 
     def __str__(self):
         if self.title:
-            return "Chapter {}: {}".format(self.id, self.title)
-        return "Chapter {}".format(self.id)
+            return "%s %s: %s" % (Cfg.get('CHAPTER'), self.id, self.title)
+        return "%s %s"% (Cfg.get('CHAPTER'), self.id)

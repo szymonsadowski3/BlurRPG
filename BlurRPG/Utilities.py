@@ -1,13 +1,16 @@
 import collections
-from recordclass import recordclass
 import os
-from enum import Enum
 import sys,time,random
+from Cfg import Cfg
 
-Position = recordclass('Position', 'x y')
+class Position:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
 Direction = collections.namedtuple('Direction', 'dx dy')
 
-clear = lambda: os.system('clear')
+clear = lambda: os.system('cls')
 
 def get_numeric_safe(prompt):
     while True:
@@ -15,7 +18,7 @@ def get_numeric_safe(prompt):
             res = int(input(prompt))
             break
         except (ValueError, NameError):
-            print("Numbers only please!")
+            print(Cfg.get('NUMS_PLS'))
     return res
 
 def get_numeric_safe_in_range(prompt, lower, upper):
@@ -23,11 +26,11 @@ def get_numeric_safe_in_range(prompt, lower, upper):
         try:
             res = int(input(prompt))
             if res<lower or res>upper:
-                print('Typed value must be between %d and %d' % (lower, upper))
+                print(Cfg.get('RANGE_PLS') % (lower, upper))
                 continue
             break
         except (ValueError, NameError):
-            print("Numbers only please!")
+            print(Cfg.get('NUMS_PLS'))
     return res
 
 def get_numeric_or_default(prompt, default):
