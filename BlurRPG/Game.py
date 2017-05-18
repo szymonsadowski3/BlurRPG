@@ -7,6 +7,9 @@ import Items
 import importlib
 import GameChapter
 from Cfg import Cfg
+import time
+import Events
+
 
 # numeracja
 # widzisz monstera jak jest blisko
@@ -32,6 +35,7 @@ class Engine(object):
 
     @classmethod
     def wsad_to_direction(cls, str):
+        print(str)
         if str in cls.direction_mapping:
             return cls.direction_mapping[str]
         else:
@@ -160,8 +164,13 @@ class Game(object):
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
 
-        self.list_of_chapters = [GameChapter.GameChapter(self.player, 1, init_player_position=Util.Position(1, 0), title='Escape'), GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1))]
-        # self.list_of_chapters = [GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1))]
+        # self.list_of_chapters = [
+        #     GameChapter.GameChapter(self.player, 1, init_player_position=Util.Position(1, 0), title='Escape'),
+        #     GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1)),
+        #     GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 1),
+        #                             map_cell_to_event={'I': Events.InnCH3(self.player),
+        #                                                ' ': Events.Blank(self.player)})]
+        self.list_of_chapters = [GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 12), map_cell_to_event={'I': Events.InnCH3(self.player), ' ': Events.Blank(self.player)})]
 
     def step(self):
         Util.clear()

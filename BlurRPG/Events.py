@@ -117,3 +117,12 @@ class MazeEnd(Event):
 class Blank(Event):
     def run(self):
         pass
+
+class InnCH3(Event):
+    def __init__(self, player):
+        super(InnCH3, self).__init__(player)
+
+    def run(self):
+        Util.clear()
+        Util.slow_print(Cfg.get('ENTER_INN_CH3'))
+

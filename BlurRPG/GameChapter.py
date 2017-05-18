@@ -3,10 +3,10 @@ import Utilities as Util
 from Cfg import Cfg
 
 class GameChapter(object):
-    def __init__(self, player, id, init_player_position=Util.Position(0,0), title=None):
+    def __init__(self, player, id, init_player_position=Util.Position(0,0), title=None, map_cell_to_event=None):
         self.player = player
         self.id = id
-        self.map = Map.LocalMap(player)
+        self.map = Map.LocalMap(player, map_cell_to_event_object=map_cell_to_event)
         self.map.load_map_from_file('maps/map{}.txt'.format(id))
         self.introduction_text = Util.read_lines('intro_texts/ch{}.txt'.format(id))
         self.init_player_position = init_player_position

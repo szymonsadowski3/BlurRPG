@@ -6,16 +6,22 @@ import collections
 
 COLLISION_SYMBOL = '#'
 
-legend_mapping = collections.OrderedDict([('#', Cfg.get('HASH')), ('P', Cfg.get('PLAYER')), ('E', Cfg.get('MAZE_END')),  ('J', Cfg.get('JACK'))])
+legend_mapping = collections.OrderedDict(
+    [('#', Cfg.get('HASH')), ('P', Cfg.get('PLAYER')), ('E', Cfg.get('MAZE_END')), ('J', Cfg.get('JACK'))])
+
 
 class LocalMap(object):
-    def __init__(self, player):
+    def __init__(self, player, map_cell_to_event_object=None):
         self.player = player
         self.map_array = []
 
-        self.map_cell_to_event_object = {'B': Events.MonsterFight(self.player, Monster.Banshee), ' ': Events.Blank(self.player),
-                                         'I': Events.Inn(self.player), 'J': Events.JackCH2(self.player),
-                                         'E': Events.MazeEnd(self.player)}
+        if not map_cell_to_event_object:
+            self.map_cell_to_event_object = {'B': Events.MonsterFight(self.player, Monster.Banshee),
+                                            ' ': Events.Blank(self.player),
+                                            'I': Events.Inn(self.player), 'J': Events.JackCH2(self.player),
+                                            'E': Events.MazeEnd(self.player)}
+        else:
+            self.map_cell_to_event_object = map_cell_to_event_object
 
     def load_map_from_file(self, path):
         with open(path) as f:
@@ -24,7 +30,7 @@ class LocalMap(object):
                 self.map_array.append(list_made_from_line)
 
         self.containing_symbols = self.get_containing_symbols()
-        self.legend = {k: v for k, v in legend_mapping.items() if k in self.containing_symbols or k=='P'}
+        self.legend = {k: v for k, v in legend_mapping.items() if k in self.containing_symbols or k == 'P'}
 
     def __str__(self):
         return ('\n'.join([''.join(['{:2}'.format(item) for item in row])
