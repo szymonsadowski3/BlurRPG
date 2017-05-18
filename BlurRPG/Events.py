@@ -95,28 +95,24 @@ class Inn(Event):
         bartender = NPC.basic_bartender(self.player)
         bartender.perform()
 
-class DisappearingBansheeWarner(Event):
+class JackCH2(Event):
     def __init__(self, player):
-        super(DisappearingBansheeWarner, self).__init__(player, disappear_after_run=True)
-        self.choices.append(Cfg.get('APPROACH_DBW'))
-        self.choice_to_function = {0: self.talk}
+        super(JackCH2, self).__init__(player, disappear_after_run=False)
 
     def run(self):
-        while True:
-            Util.clear()
-            print(Cfg.get('NOTICE_DBW') + '\n')
-            self.print_choices()
-            choice = Util.get_numeric_or_default(Cfg.get('CHOICE') + ' ', -1)
-            func_to_call = self.choice_to_function.get(choice, None)
-            if choice!=-1 and func_to_call:
-                func_to_call()
-                self.player.proceed_to_next_chapter = True
-                return
-
-    def talk(self):
         Util.clear()
-        for line in Cfg.getLines('INTERACT_DBW'):
+
+        for line in Cfg.getLines('NOTICE_JACK'):
             Util.slow_print(line)
+
+        self.player.proceed_to_next_chapter = True
+
+class MazeEnd(Event):
+    def __init__(self, player):
+        super(MazeEnd, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        self.player.proceed_to_next_chapter = True
 
 class Blank(Event):
     def run(self):

@@ -1,7 +1,11 @@
 import collections
 import os
-import sys,time,random
+import sys
+import time
+import random
 from Cfg import Cfg
+import os.path
+
 
 class Position:
     def __init__(self, x, y):
@@ -10,7 +14,12 @@ class Position:
 
 Direction = collections.namedtuple('Direction', 'dx dy')
 
-clear = lambda: os.system('cls')
+clear = lambda: os.system('clear')
+
+def clear_with_enter():
+    input('\n[PRESS ENTER TO PROCEED]: ')
+    os.system('clear')
+
 
 def get_numeric_safe(prompt):
     while True:
@@ -66,6 +75,47 @@ def slow_print(msg, typing_speed=1300, endline=True): #http://stackoverflow.com/
         time.sleep(random.random()*10.0/typing_speed)
     if endline:
         print('')
+    time.sleep(0.5)
 
 def slow_prin(msg, typing_speed=130, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
     print(msg, end='\n' if endline else '')
+
+def file_exists(fname):
+    return os.path.isfile(fname)
+
+def read_lines(fname):
+    if file_exists(fname):
+        with open(fname) as f:
+            content = f.readlines()
+        return [x.strip() for x in content]
+    else:
+        return []
+
+
+class _Getch:
+    """Gets a single character from standard input.  Does not echo to the
+screen."""
+    def __init__(self):
+        self.impl = _GetchUnix()
+
+    def __call__(self): return self.impl()
+
+
+class _GetchUnix:
+    def __init__(self):
+        import tty, sys
+
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+getch = _Getch()
+

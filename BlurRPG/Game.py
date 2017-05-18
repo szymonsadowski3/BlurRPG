@@ -8,6 +8,10 @@ import importlib
 import GameChapter
 from Cfg import Cfg
 
+# numeracja
+# widzisz monstera jak jest blisko
+# np. 3d -> 3 razy w prawo
+# ograniczona widocznosc w labiryncie
 
 class Engine(object):
     attitude_modifiers = {0: 0.7, 1: 1, 2: 1.3}  # attitude - 0 offensive, 1 - neutral, 2 - defensive
@@ -21,8 +25,10 @@ class Engine(object):
 
     @classmethod
     def read_direction(cls):
-        return cls.wsad_to_direction(input('\n' + Cfg.get('CHOOSE_DIRECTION') + ' ').upper())
+        # return cls.wsad_to_direction(input('\n' + Cfg.get('CHOOSE_DIRECTION') + ' ').upper())
         # return self.str_to_dir(msvcrt.getch().decode('ASCII').upper())
+        print('\n' + Cfg.get('CHOOSE_DIRECTION') + ' ')
+        return cls.wsad_to_direction(Util.getch().upper())
 
     @classmethod
     def wsad_to_direction(cls, str):
@@ -125,7 +131,7 @@ class Game(object):
         return False
 
     def title(self):
-        Util.slow_print('BLUR .', typing_speed=20)
+        Util.slow_print('BLUR .')
 
     def player_initialization(self):
         lines = Cfg.getLines('INIT')
@@ -154,7 +160,8 @@ class Game(object):
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
 
-        self.list_of_chapters = [GameChapter.GameChapter(self.player, 1), GameChapter.GameChapter(self.player, 2)]
+        self.list_of_chapters = [GameChapter.GameChapter(self.player, 1, init_player_position=Util.Position(1, 0), title='Escape'), GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1))]
+        # self.list_of_chapters = [GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1))]
 
     def step(self):
         Util.clear()
@@ -173,7 +180,10 @@ if __name__ == "__main__":
     for chapter in game.list_of_chapters:
         game.player.proceed_to_next_chapter = False
         Util.clear()
-        Util.slow_print(str(chapter), typing_speed=20)
+
+        chapter.slow_print_self()
+        chapter.slow_print_intro()
+
         game.current_map = chapter.map
         game.player.position = chapter.init_player_position
         while not game.player.proceed_to_next_chapter:
