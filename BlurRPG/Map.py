@@ -7,7 +7,8 @@ import collections
 COLLISION_SYMBOL = '#'
 
 legend_mapping = collections.OrderedDict(
-    [('#', Cfg.get('HASH')), ('P', Cfg.get('PLAYER')), ('E', Cfg.get('MAZE_END')), ('J', Cfg.get('JACK'))])
+    [('#', Cfg.get('HASH')), ('P', Cfg.get('PLAYER')), ('E', Cfg.get('MAZE_END')), ('J', Cfg.get('JACK')),
+     ('S', Cfg.get('SLIME')), ('C', Cfg.get('CHEST')), ('T', Cfg.get('TREASURE')), ('R', Cfg.get('RIDDLE'))])
 
 
 class LocalMap(object):
@@ -16,10 +17,9 @@ class LocalMap(object):
         self.map_array = []
 
         if not map_cell_to_event_object:
-            self.map_cell_to_event_object = {'B': Events.MonsterFight(self.player, Monster.Banshee),
-                                            ' ': Events.Blank(self.player),
-                                            'I': Events.Inn(self.player), 'J': Events.JackCH2(self.player),
-                                            'E': Events.MazeEnd(self.player)}
+            self.map_cell_to_event_object = {' ': Events.Blank(self.player),
+                                             'I': Events.Inn(self.player), 'J': Events.JackCH2(self.player),
+                                             'E': Events.MazeEnd(self.player)}
         else:
             self.map_cell_to_event_object = map_cell_to_event_object
 
@@ -73,7 +73,10 @@ class LocalMap(object):
 
     def fetch_event(self, player):
         symbol = self[player.position.y][player.position.x]
-        return self.map_cell_to_event_object[symbol]
+        fetched = self.map_cell_to_event_object[symbol]
+        if isinstance(fetched, Events.MonsterFight):
+            fetched.reset()
+        return fetched
         # event = self.map_cell_to_event[symbol]
         # if event == Events.MonsterFight:
         #     monster_to_fight = self.map_symbol_to_monster[symbol]

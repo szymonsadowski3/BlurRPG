@@ -48,9 +48,7 @@ def create_eq_item(name, slot, strength_boost, defence_boost, vitality_boost, ag
     weapon.battle_stats = {'strength': strength_boost, 'defence': defence_boost, 'vitality': vitality_boost, 'agility': agility_boost}
     return weapon
 
-sword_of_oblivion = create_eq_item('Sword of Oblivion', 'weapon', 15, -5, 0, 5)
-sword_of_light = create_eq_item('Sword of Light', 'weapon', 5, 5, 5, 0)
-shadow_armor = create_eq_item('Shadow Armor', 'armor', 0, 10, 5, 0)
+old_mans_sword = create_eq_item("Old Man's Sword", 'weapon', 4, -2, 0, 1)
 
 def basic_beer():
     beer = Item('Beer')
@@ -61,3 +59,15 @@ def basic_beer():
         return True
     beer.using = beer_usage
     return beer
+
+def health_potion(player):
+    pot = Item('Health Potion')
+    pot.info['cost'] = 10
+    def pot_usage():
+        Utilities.clear()
+        Utilities.slow_print(Cfg.get('HEAL'))
+        Utilities.clear_with_enter()
+        player.heal_up()
+        return True
+    pot.using = pot_usage
+    return pot

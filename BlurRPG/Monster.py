@@ -16,4 +16,6 @@ class Monster(object):
     def get_overall_stat(self, stat):
         return self.stats[stat]
 
-Banshee = Monster(8, 100, 8, 8, 'Banshee')
+
+def get_slime():
+    return Monster(strength=4, vitality=100, defence=4, agility=10, name='Slime')

@@ -9,6 +9,7 @@ import GameChapter
 from Cfg import Cfg
 import time
 import Events
+import Monster
 
 
 # numeracja
@@ -89,6 +90,7 @@ class Game(object):
             return
         else:
             self.player.consume_item_from_backpack(choice)
+            Util.clear_with_enter()
 
     def run_option_eq(self):  # TODO REFACTOR
         Util.clear()
@@ -114,7 +116,7 @@ class Game(object):
             Util.slow_print('BACKPACK . \n')
             self.player.print_backpack()
             item_index = Util.get_numeric_safe_in_range(
-                Cfg.get('EQUIP') % slot.lower(), 0, len(self.player.backpack))
+                (Cfg.get('EQUIP') % slot.lower()) + ' ', 0, len(self.player.backpack))
             if item_index != -1 and item_index < len(self.player.backpack):
                 item_to_add = self.player.backpack[item_index]
                 slot_name_to_classname = slot.lower().title()
@@ -164,16 +166,19 @@ class Game(object):
         self.player_starting_cfg()
         self.player_options_to_function = {0: self.run_option_move, 1: self.run_option_backpack, 2: self.run_option_eq}
 
-        # self.list_of_chapters = [
-        #     GameChapter.GameChapter(self.player, 1, init_player_position=Util.Position(1, 0), title='Escape'),
-        #     GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1)),
-        #     GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 1),
-        #                             map_cell_to_event={'I': Events.InnCH3(self.player),
-        #                                                ' ': Events.Blank(self.player)})]
-        self.list_of_chapters = [GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 12),
-                                                         map_cell_to_event={'I': Events.InnCH3(self.player),
-                                                                            ' ': Events.Blank(self.player)}),
-                                 GameChapter.GameChapter(self.player, 4, init_player_position=Util.Position(1, 1))]
+        self.list_of_chapters = [
+                                    GameChapter.GameChapter(self.player, 1, init_player_position=Util.Position(1, 0),
+                                                            title='Escape'),
+                                    GameChapter.GameChapter(self.player, 2, init_player_position=Util.Position(1, 1)),
+                                    GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 1),
+                                                            map_cell_to_event={'I': Events.InnCH3(self.player),
+                                                                               ' ': Events.Blank(self.player)}),
+                                    GameChapter.GameChapter(self.player, 4, init_player_position=Util.Position(1, 0),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'S': Events.MonsterFight(self.player,
+                                                                                                        Monster.get_slime, allow_to_flee=False, money_received=5),
+                                                                               'H': Events.CollectHealthPotion(
+                                                                                   self.player), 'R': Events.RiddleManInTunnel(self.player)})][-1:]
 
     def step(self):
         Util.clear()

@@ -4,6 +4,7 @@ import random
 import Utilities as Util
 import NPC
 from Cfg import Cfg
+import Items
 
 class Event(object):
     def __init__(self, player, disappear_after_run=False):
@@ -21,16 +22,24 @@ class Event(object):
         #     print("%d. %s\n" % (key, value))
 
 class MonsterFight(Event):
-    def __init__(self, player, monster, allow_to_flee=True):
-        super(MonsterFight, self).__init__(player)
+    def __init__(self, player, monster_init_func, allow_to_flee=True, money_received = 0):
+        super(MonsterFight, self).__init__(player, disappear_after_run=True)
         self.choices.extend((Cfg.get('ATK_OFE'), Cfg.get('ATK_NEU'), Cfg.get('ATK_DEF')))
 
         if allow_to_flee:
             self.choices.append(Cfg.get('FLEE_ATTEMPT'))
 
         self.choice_to_method = {}
-        self.monster = monster
+
+        print(monster_init_func)
+        print(monster_init_func())
+        self.monster_init_func = monster_init_func
+        self.monster = monster_init_func()
         self.allow_to_flee = allow_to_flee
+        self.money_received = money_received
+
+    def reset(self):
+        self.monster = self.monster_init_func()
 
     def print_fight_message(self, attacker_name, defender_name, dmg):
         print(Cfg.get('BATTLE_INFO') % (attacker_name,defender_name,dmg))
@@ -68,10 +77,17 @@ class MonsterFight(Event):
             if choice<3:
                 flag_exit = self.fight(self.monster, choice)
             else:
-                if self.was_flee_successful():
+                if self.allow_to_flee and self.was_flee_successful():
                     Util.slow_print(Cfg.get('FLEE_SUCCESS'))
+                    Util.clear_with_enter()
                     return
         Util.slow_print(Cfg.get('DEFEAT_SUCCESS') + '\n')
+
+        if self.money_received:
+            Util.slow_print(Cfg.get('MONEY_RECEIVE') % self.money_received, '\n')
+            self.player.get_money(self.money_received)
+
+        Util.clear_with_enter()
 
 class Inn(Event):
     def __init__(self, player):
@@ -150,3 +166,48 @@ class InnCH3(Event):
                 self.player.proceed_to_next_chapter = True
                 break
 
+class CollectHealthPotion(Event):
+    def __init__(self, player):
+        super(CollectHealthPotion, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+        Util.slow_print('\n' + Cfg.get('PICK_UP_HP_POT') + '\n')
+        self.player.add_item_to_backpack(Items.health_potion(self.player))
+        Util.clear_with_enter()
+
+class CollectChest(Event):
+    def __init__(self, player):
+        super(CollectChest, self).__init__(player, disappear_after_run=True)
+        self.amount = 5
+
+    def run(self):
+        Util.clear()
+        Util.slow_print(Cfg.get('MONEY_RECEIVE') % self.amount, '\n')
+        self.player.get_money(self.amount)
+        Util.clear_with_enter()
+
+class RiddleManInTunnel(Event):
+    def __init__(self, player):
+        super(RiddleManInTunnel, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+        Util.slow_print(Cfg.get('RIDDLE') + '\n')
+        Util.clear_with_enter()
+
+        for l in Cfg.getLines('RIDDLE_IN_TUNNELS_INTRO'):
+            Util.slow_print(l)
+
+        Util.clear_with_enter()
+
+        Util.slow_print(Cfg.get('FST_RIDDLE'))
+
+        answers = Cfg.getLines('FST_RIDDLE_ANSW')
+        user_answ = input(Cfg.get('WHAT_IS_ANSW') + ' ')
+
+        if user_answ.strip().upper() in answers:
+            Util.slow_print(Cfg.get('RIGHT_ANSW'))
+            self.player.add_item_to_backpack(Items.old_mans_sword)
+        else:
+            Util.slow_print(Cfg.get('WRONG_ANSW'))

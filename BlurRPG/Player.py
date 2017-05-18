@@ -3,7 +3,7 @@ from Cfg import Cfg
 
 class Player(object):
     def __init__(self, name, position):
-        self.stats = {'hp': 20, 'strength': 5, 'defence': 5, 'vitality': 20, 'agility': 5, 'money': 0}
+        self.stats = {'hp': 100, 'strength': 5, 'defence': 5, 'vitality': 100, 'agility': 5, 'money': 0}
         self.position = position
         self.name = name
         self.backpack = []
@@ -62,7 +62,10 @@ class Player(object):
                 self.backpack.remove(item)
 
     def add_item_to_backpack(self, item):
-                self.backpack.append(item)
+        self.backpack.append(item)
+        Utilities.slow_print(Cfg.get('OBTAIN') % item.info['name'])
+        Utilities.clear_with_enter()
+
 
     def remove_item_from_backpack(self, item):
                 self.backpack.remove(item)
@@ -79,9 +82,20 @@ class Player(object):
     def equip_from_bp(self, slot_name, from_bp):
         item_removed = self.equipment[slot_name]
         self.equipment[slot_name] = from_bp
-        self.add_item_to_backpack(item_removed)
+
+        if item_removed:
+            self.add_item_to_backpack(item_removed)
+
         self.remove_item_from_backpack(from_bp)
 
     def takeoff_slot(self, slot_name):
-        self.add_item_to_backpack(self.equipment[slot_name])
+        item = self.equipment[slot_name]
+        if item:
+            self.add_item_to_backpack(self.equipment[slot_name])
         self.equipment[slot_name] = None
+
+    def heal_up(self):
+        self.stats['hp'] = self.stats['vitality']
+
+    def get_money(self, money):
+        self.stats['money'] += money
