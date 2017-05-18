@@ -124,5 +124,29 @@ class InnCH3(Event):
 
     def run(self):
         Util.clear()
-        Util.slow_print(Cfg.get('ENTER_INN_CH3'))
+        for line in Cfg.getLines('ENTER_INN_CH3'):
+            Util.slow_print(line)
+
+        Util.clear_with_enter()
+
+        result = None
+
+        while result!='WIN':
+            result = Util.DiceGame().play()
+
+            if result=='LOSS':
+                Util.slow_print('\n' + Cfg.get('JACK_WIN') + '\n')
+                Util.slow_print(Cfg.get('PLAY_AGAIN'))
+                Util.clear_with_enter()
+
+            elif result=='DRAW':
+                Util.slow_print(Cfg.get('DRAW_GAME') + '\n')
+                Util.slow_print(Cfg.get('PLAY_AGAIN'))
+                Util.clear_with_enter()
+
+            else:
+                Util.slow_print(Cfg.get('PLAYER_WIN'))
+                Util.clear_with_enter()
+                self.player.proceed_to_next_chapter = True
+                break
 

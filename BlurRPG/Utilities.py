@@ -5,6 +5,7 @@ import time
 import random
 from Cfg import Cfg
 import os.path
+import operator
 
 
 class Position:
@@ -12,13 +13,15 @@ class Position:
         self.x = x
         self.y = y
 
+CLEAR_CMD = 'cls'
+
 Direction = collections.namedtuple('Direction', 'dx dy')
 
-clear = lambda: os.system('cls')
+clear = lambda: os.system(CLEAR_CMD)
 
 def clear_with_enter():
     input('\n[PRESS ENTER TO PROCEED]: ')
-    os.system('clear')
+    os.system(CLEAR_CMD)
 
 
 def get_numeric_safe(prompt):
@@ -68,7 +71,7 @@ def pprint_list(list):
         print("%d: %s" % (ind, val), end=ending)
     print('}')
 
-def slow_prin(msg, typing_speed=1300, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
+def slow_print(msg, typing_speed=1300, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
     for l in msg:
         sys.stdout.write(l)
         sys.stdout.flush()
@@ -77,7 +80,7 @@ def slow_prin(msg, typing_speed=1300, endline=True): #http://stackoverflow.com/q
         print('')
     time.sleep(0.5)
 
-def slow_print(msg, typing_speed=130, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
+def slow_prin(msg, typing_speed=130, endline=True): #http://stackoverflow.com/questions/4099422/printing-slowly-simulate-typing
     print(msg, end='\n' if endline else '')
 
 def file_exists(fname):
@@ -303,6 +306,9 @@ class Dice:
     def __repr__(self):
         return str(self.peeps)
 
+    def __str__(self):
+        return str(self.peeps)
+
     def __radd__(self, other):
         return other + self.peeps
 
@@ -337,39 +343,47 @@ class DiceGame:
         return mask
 
     def play(self):
-        print('You are rolling...')
-        self.roll_series(self.player_series)
-        print('You rolled: ')
-        print(self.player_series)
+        clear()
+        slow_print(Cfg.get('FST_ROUND'))
+        clear_with_enter()
 
-        print('CPU is rolling...')
+        slow_print(Cfg.get('PLAYER_ROLLING') + '\n')
+        self.roll_series(self.player_series)
+        slow_print(Cfg.get('U_ROLLED') + ' ')
+        slow_print(str(self.player_series))
+
+        slow_print('\n' + Cfg.get('CPU_ROLLING') + '\n')
         self.roll_series(self.cpu_series)
-        print('CPU rolled: ')
-        print(self.cpu_series)
+        slow_print(Cfg.get('CPU_ROLLED') + ' ')
+        slow_print(str(self.cpu_series) + '\n')
 
         mask = self.get_mask()
 
-        print('You are rolling2...')
-        self.roll_series(self.player_series, mask)
-        print('You rolled2: ')
-        print(self.player_series)
+        clear()
+        slow_print(Cfg.get('SND_ROUND'))
+        clear_with_enter()
 
-        print('CPU is rolling2...')
+        slow_print(Cfg.get('PLAYER_ROLLING') + '\n')
+        self.roll_series(self.player_series, mask)
+        slow_print(Cfg.get('U_ROLLED') + ' ')
+        slow_print(str(self.player_series))
+
+        slow_print(Cfg.get('CPU_ROLLING') + '\n')
         self.roll_series(self.cpu_series, self.cpu_mask(self.cpu_series))
-        print('CPU rolled2: ')
-        print(self.cpu_series)
+        slow_print(Cfg.get('CPU_ROLLED') + ' ')
+        slow_print(str(self.cpu_series))
 
         player_val = get_combination_value(self.player_series)
         cpu_val = get_combination_value(self.cpu_series)
 
         if cpu_val == player_val:
-            print('DRAW!')
+            slow_print('\n' + Cfg.get('DRAW') + '\n')
             return 'DRAW'
         elif cpu_val <= player_val:
-            print('YOU WON!')
+            slow_print('\n' + Cfg.get('WIN') + '\n')
             return 'WIN'
         else:
-            print('YOU LOST!')
+            slow_print('\n' + Cfg.get('LOSS') + '\n')
             return 'LOSS'
 
     def valid_mask(self, mask):
@@ -384,8 +398,5 @@ class DiceGame:
                 break
 
         return [x == 'T' for x in mask]
-
-DiceGame().play()
-# print(DiceGame.cpu_mask([Dice(5), Dice(3), Dice(5), Dice(3), Dice(1)]))
 ####END OF DICE GAME####
 ###EOGAMES###

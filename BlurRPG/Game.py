@@ -170,7 +170,10 @@ class Game(object):
         #     GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 1),
         #                             map_cell_to_event={'I': Events.InnCH3(self.player),
         #                                                ' ': Events.Blank(self.player)})]
-        self.list_of_chapters = [GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 12), map_cell_to_event={'I': Events.InnCH3(self.player), ' ': Events.Blank(self.player)})]
+        self.list_of_chapters = [GameChapter.GameChapter(self.player, 3, init_player_position=Util.Position(1, 12),
+                                                         map_cell_to_event={'I': Events.InnCH3(self.player),
+                                                                            ' ': Events.Blank(self.player)}),
+                                 GameChapter.GameChapter(self.player, 4, init_player_position=Util.Position(1, 1))]
 
     def step(self):
         Util.clear()
