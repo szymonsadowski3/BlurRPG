@@ -13,7 +13,7 @@ class Position:
         self.x = x
         self.y = y
 
-CLEAR_CMD = 'cls'
+CLEAR_CMD = 'clear'
 
 Direction = collections.namedtuple('Direction', 'dx dy')
 
@@ -24,6 +24,10 @@ def clear_with_enter():
     os.system(CLEAR_CMD)
 
 
+def get_true_or_false(prompt, ending=' '):
+    res = input(prompt + ending).strip().upper()
+    return res == 'T'
+
 def get_numeric_safe(prompt):
     while True:
         try:
@@ -32,6 +36,7 @@ def get_numeric_safe(prompt):
         except (ValueError, NameError):
             print(Cfg.get('NUMS_PLS'))
     return res
+
 
 def get_numeric_safe_in_range(prompt, lower, upper):
     while True:
@@ -44,6 +49,7 @@ def get_numeric_safe_in_range(prompt, lower, upper):
         except (ValueError, NameError):
             print(Cfg.get('NUMS_PLS'))
     return res
+
 
 def get_numeric_or_default(prompt, default):
     try:

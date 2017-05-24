@@ -10,6 +10,10 @@ class Player(object):
         self.equipment = {'weapon': None, 'armor': None}
         self.proceed_to_next_chapter = False
 
+    def has_item(self, item_name):
+        item_names_from_bp = [x.info['name'] for x in self.backpack]
+        return item_name in item_names_from_bp
+
     def move(self, direction):
         self.position.x += direction.dx
         self.position.y += direction.dy
@@ -63,12 +67,20 @@ class Player(object):
 
     def add_item_to_backpack(self, item):
         self.backpack.append(item)
-        Utilities.slow_print(Cfg.get('OBTAIN') % item.info['name'])
+        Utilities.slow_print('\n' + Cfg.get('OBTAIN') % item.info['name'])
         Utilities.clear_with_enter()
 
 
     def remove_item_from_backpack(self, item):
+        self.backpack.remove(item)
+
+
+    def remove_item_from_backpack_by_name(self, name):
+        for item in self.backpack:
+            if item.info['name'] == name:
                 self.backpack.remove(item)
+                return
+
 
     def try_to_buy(self, item):
         Utilities.clear()

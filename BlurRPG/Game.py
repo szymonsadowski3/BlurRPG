@@ -156,7 +156,7 @@ class Game(object):
         pass
         # self.player.put_on_eq_item(Items.sword_of_oblivion, 'weapon')
         # self.player.put_on_eq_item(Items.shadow_armor, 'armor')
-        # self.player.add_item_to_backpack(Items.shadow_armor)
+        self.player.add_item_to_backpack(Items.health_potion(self.player))
 
     def __init__(self):
         self.player_options = [Cfg.get('PL_MOVE'), Cfg.get('PL_BP'), Cfg.get('PL_EQ')]
@@ -176,9 +176,22 @@ class Game(object):
                                     GameChapter.GameChapter(self.player, 4, init_player_position=Util.Position(1, 0),
                                                             map_cell_to_event={' ': Events.Blank(self.player),
                                                                                'S': Events.MonsterFight(self.player,
-                                                                                                        Monster.get_slime, allow_to_flee=False, money_received=5),
+                                                                                                        Monster.get_slime,
+                                                                                                        allow_to_flee=False,
+                                                                                                        money_received=5),
                                                                                'H': Events.CollectHealthPotion(
-                                                                                   self.player), 'R': Events.RiddleManInTunnel(self.player)})][-1:]
+                                                                                   self.player),
+                                                                               'R': Events.RiddleManInTunnel(
+                                                                                   self.player),
+                                                                               'C': Events.CollectChest(self.player),
+                                                                               'E': Events.MazeEnd(self.player)}),
+                                    GameChapter.GameChapter(self.player, 5, init_player_position=Util.Position(0, 1),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'G': Events.GuardCH5(self.player)}),
+                                    GameChapter.GameChapter(self.player, 6, init_player_position=Util.Position(0, 16),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'M': Events.Mansion(self.player),
+                                                                               'O': Events.OldManOnHill})][-1:]
 
     def step(self):
         Util.clear()

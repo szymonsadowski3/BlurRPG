@@ -49,6 +49,8 @@ def create_eq_item(name, slot, strength_boost, defence_boost, vitality_boost, ag
     return weapon
 
 old_mans_sword = create_eq_item("Old Man's Sword", 'weapon', 4, -2, 0, 1)
+guards_armor = create_eq_item("Guard's Armor", 'weapon', 0, 3, 0, 1)
+
 
 def basic_beer():
     beer = Item('Beer')

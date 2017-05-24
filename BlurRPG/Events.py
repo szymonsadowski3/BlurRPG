@@ -5,6 +5,7 @@ import Utilities as Util
 import NPC
 from Cfg import Cfg
 import Items
+import Events
 
 class Event(object):
     def __init__(self, player, disappear_after_run=False):
@@ -204,10 +205,100 @@ class RiddleManInTunnel(Event):
         Util.slow_print(Cfg.get('FST_RIDDLE'))
 
         answers = Cfg.getLines('FST_RIDDLE_ANSW')
-        user_answ = input(Cfg.get('WHAT_IS_ANSW') + ' ')
+        user_answ = input('\n' + Cfg.get('WHAT_IS_ANSW') + ' ')
 
         if user_answ.strip().upper() in answers:
-            Util.slow_print(Cfg.get('RIGHT_ANSW'))
+            Util.slow_print('\n' + Cfg.get('RIGHT_ANSW'))
             self.player.add_item_to_backpack(Items.old_mans_sword)
         else:
             Util.slow_print(Cfg.get('WRONG_ANSW'))
+
+class GuardCH5(Event):
+    def __init__(self, player):
+        super(GuardCH5, self).__init__(player, disappear_after_run=False)
+        self.choices.append(Cfg.get('TALK_GUARD'))
+        self.choices.append(Cfg.get('PASS'))
+        self.choice_to_function = {0: self.help, 1: self.pass_guard}
+
+    def run(self):
+        break_flag = None
+        while break_flag!=True:
+            Util.clear()
+            print(Cfg.get('NOTICE_GUARD') + '\n')
+            self.print_choices()
+            choice = Util.get_numeric_or_default(Cfg.get('CHOICE') + ' ', -1)
+            func_to_call = self.choice_to_function.get(choice, None)
+            if choice!=-1 and func_to_call:
+                break_flag = func_to_call()
+            else:
+                break
+
+    def help(self):
+        Util.clear()
+        Util.slow_print(Cfg.get('GUARDCH5_IS_SAYING') + '\n')
+
+        if self.player.has_item('Health Potion'):
+            will_help = Util.get_true_or_false(Cfg.get('HELP_GUARD_CH5'))
+
+            if will_help:
+                self.player.remove_item_from_backpack_by_name('Health Potion')
+                Util.slow_print(Cfg.get('GUARD_CH5_THANKS') + '\n')
+                self.player.add_item_to_backpack(Items.guards_armor)
+                self.player.proceed_to_next_chapter = True
+                return True
+            else:
+                Util.slow_print(Cfg.get('GUARDS_COUGH'))
+
+        else:
+            help_him = Util.get_true_or_false(Cfg.get('HELP_GUARD_CH5_2'))
+            if help_him:
+                Util.slow_print('\n' + Cfg.get('GUARD_CH5_THANKS') + '\n')
+                self.player.get_money(5)
+                Util.slow_print(Cfg.get('MONEY_RECEIVE') % 5, '\n')
+                self.player.proceed_to_next_chapter = True
+                return True
+            else:
+                Util.slow_print(Cfg.get('GUARDS_COUGH'))
+
+        Util.clear_with_enter()
+
+
+    def trade(self):
+        Util.slow_print('GUARDCH5_EXCHANGE' + '\n')
+
+    def pass_guard(self):
+        self.player.proceed_to_next_chapter = True
+        return True
+
+class Mansion(Event):
+    pass
+
+class OldManOnHill(Event):
+    def __init__(self, player):
+        super(OldManOnHill, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+        Util.slow_print(Cfg.get('RIDDLE') + '\n')
+        Util.clear_with_enter()
+
+        for l in Cfg.getLines('RIDDLE_ON_HILL_INTRO'):
+            Util.slow_print(l)
+
+        Util.clear_with_enter()
+
+        Util.slow_print(Cfg.get('SND_RIDDLE'))
+
+        answers = Cfg.getLines('SND_RIDDLE_ANSW')
+        user_answ = input('\n' + Cfg.get('WHAT_IS_ANSW') + ' ')
+
+        if user_answ.strip().upper() in answers:
+            Util.slow_print('\n' + Cfg.get('RIGHT_ANSW_ON_HILL'))
+            next_event = Events.MonsterFight(self.player,
+                                Monster.get_slime,
+                                allow_to_flee=False,
+                                money_received=5)
+            next_event.run()
+            self.player.proceed_to_next_chapter = True
+        else:
+            Util.slow_print(Cfg.get('WRONG_ANSW_ON_HILLE'))
