@@ -1,5 +1,5 @@
 from Game import Engine
-from Monster import Monster
+import Monster
 import random
 import Utilities as Util
 import NPC
@@ -270,8 +270,14 @@ class GuardCH5(Event):
         self.player.proceed_to_next_chapter = True
         return True
 
+
 class Mansion(Event):
-    pass
+    def __init__(self, player):
+        super(Mansion, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        self.player.proceed_to_next_chapter = True
+
 
 class OldManOnHill(Event):
     def __init__(self, player):
@@ -299,6 +305,34 @@ class OldManOnHill(Event):
                                 allow_to_flee=False,
                                 money_received=5)
             next_event.run()
-            self.player.proceed_to_next_chapter = True
+            # self.player.proceed_to_next_chapter = True
         else:
-            Util.slow_print(Cfg.get('WRONG_ANSW_ON_HILLE'))
+            Util.slow_print(Cfg.get('WRONG_ANSW_ON_HILL'))
+            Util.clear_with_enter()
+
+
+class MansionBed(Event):
+    def __init__(self, player):
+        super(MansionBed, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        for line in Cfg.getLines('MANSION_BED'):
+            Util.slow_print(line)
+
+        self.player.proceed_to_next_chapter = True
+        Util.clear_with_enter()
+
+class MansionTrapdoor(Event):
+    def __init__(self, player):
+        super(MansionTrapdoor, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        for line in Cfg.getLines('MANSION_TRAPDOOR'):
+            Util.slow_print(line)
+
+        self.player.proceed_to_next_chapter = True
+        Util.clear_with_enter()

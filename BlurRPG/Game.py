@@ -148,7 +148,11 @@ class Game(object):
             else:
                 Util.slow_print(line + ' ', endline=False)
 
-        name = input()
+        name = None
+        while (not name):
+            Util.slow_print(Cfg.get('TYPE_IN_NAME'))
+            name = input()
+
         self.player = Player(name, Util.Position(x=0, y=0))
         Util.clear()
 
@@ -191,7 +195,21 @@ class Game(object):
                                     GameChapter.GameChapter(self.player, 6, init_player_position=Util.Position(0, 16),
                                                             map_cell_to_event={' ': Events.Blank(self.player),
                                                                                'M': Events.Mansion(self.player),
-                                                                               'O': Events.OldManOnHill})][-1:]
+                                                                               'O': Events.OldManOnHill(self.player)}),
+                                    GameChapter.GameChapter(self.player, 7, init_player_position=Util.Position(5, 9),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'B': Events.MansionBed(self.player)}),
+                                    GameChapter.GameChapter(self.player, 8, init_player_position=Util.Position(1, 1),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'B': Events.Blank(self.player),
+                                                                               'T': Events.MansionTrapdoor(self.player)}),
+                                    GameChapter.GameChapter(self.player, 9, init_player_position=Util.Position(0, 9),
+                                                            map_cell_to_event={' ': Events.Blank(self.player),
+                                                                               'B': Events.Blank(self.player),
+                                                                               'T': Events.MansionTrapdoor(
+                                                                                   self.player)})
+
+                                ][-1:]
 
     def step(self):
         Util.clear()
