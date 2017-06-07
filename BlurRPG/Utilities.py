@@ -13,7 +13,7 @@ class Position:
         self.x = x
         self.y = y
 
-CLEAR_CMD = 'clear'
+CLEAR_CMD = 'cls'
 
 Direction = collections.namedtuple('Direction', 'dx dy')
 
@@ -71,7 +71,7 @@ def print_dict_in_order(dict):
     print(sorted(dict.items(), key=lambda x: x[1], reverse=False))
 
 def pprint_list(list):
-    print('{', end='')
+    print('{', end = '')
     for ind, val in enumerate(list):
         ending = ', ' if ind!=len(list)-1 else ''
         print("%d: %s" % (ind, val), end=ending)
