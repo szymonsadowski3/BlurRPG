@@ -46,8 +46,6 @@ class LocalMap(object):
         Utilities.clear()
         old_cell = self[player_position.y][player_position.x]
         self[player_position.y][player_position.x] = 'P'
-        # map_to_print = ('\n'.join([''.join(['{:4}'.format(item) for item in row])
-        # for row in self.map_array]))
         map_to_print = self.__str__()
         self[player_position.y][player_position.x] = old_cell
         print(map_to_print)

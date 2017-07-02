@@ -17,4 +17,8 @@ no_to_yes1 = Node("No", content="Just what I thought about you! You do not even 
 
 #yes1 -> yes
 nature = Node("Nature", content="So you want to learn more about nature of Infinity. This is very difficult to discuss. Some claim that Infinity exist only in ones' minds. This is pure heresy! The Infinity is real! It Reason-For-Everything, Prime Mover. We are all only helpless worms, who should bend knees in face of the Infinity and hope for mercy...", answers=["You are completely insane."])
-origin = Node("Origin", content="")
+origin = Node("Origin", content="To be honest, it is impossible to learn the Origin of Infinity, because Infinity is overall origin of everything itself. To be precise, we can say that it has no origin.", answers=["You are completely insane."])
+symbol = Node("Symbol", content="This is one of easier topics to discuss. The symbol of Infinity (well-known fallen 8) is representation of Uroboros - serpenteating its own tail. It is a great depiction, as wandering forward from randomly-picked point on symbol, you end up wandering endlessly.", answers=["You are completely insane."])
+
+#no1 -> yes
+basics = Node("Basics", content="Infinity is basically the Great Force, Prime Mover, Origin of Everything. You cannot see it, yet you can without hesitation claim it is perfect. It is full of paradoxes, yet full of logic. It is beautiful. ", answers=["You are completely insane."])
