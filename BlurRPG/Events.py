@@ -324,6 +324,7 @@ class MansionBed(Event):
         self.player.proceed_to_next_chapter = True
         Util.clear_with_enter()
 
+
 class MansionTrapdoor(Event):
     def __init__(self, player):
         super(MansionTrapdoor, self).__init__(player, disappear_after_run=True)
@@ -332,6 +333,20 @@ class MansionTrapdoor(Event):
         Util.clear()
 
         for line in Cfg.getLines('MANSION_TRAPDOOR'):
+            Util.slow_print(line)
+
+        self.player.proceed_to_next_chapter = True
+        Util.clear_with_enter()
+
+
+class InfinityMaster(Event):
+    def __init__(self, player):
+        super(InfinityMaster, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        for line in Cfg.getLines('MANSION_BED'):
             Util.slow_print(line)
 
         self.player.proceed_to_next_chapter = True
