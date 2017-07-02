@@ -300,10 +300,11 @@ class OldManOnHill(Event):
 
         if user_answ.strip().upper() in answers:
             Util.slow_print('\n' + Cfg.get('RIGHT_ANSW_ON_HILL'))
+            Util.clear_with_enter()
             next_event = Events.MonsterFight(self.player,
                                 Monster.get_slime,
                                 allow_to_flee=False,
-                                money_received=5)
+                                money_received=20)
             next_event.run()
             # self.player.proceed_to_next_chapter = True
         else:

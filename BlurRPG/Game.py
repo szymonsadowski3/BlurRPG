@@ -115,22 +115,22 @@ class Game(object):
             Util.clear()
             Util.slow_print('BACKPACK . \n')
             self.player.print_backpack()
-            item_index = Util.get_numeric_safe_in_range(
-                (Cfg.get('EQUIP') % slot.lower()) + ' ', 0, len(self.player.backpack))
+            item_index = Util.get_numeric_in_range_or_default(
+                (Cfg.get('EQUIP') % slot.lower()) + ' ', 0, len(self.player.backpack), -1)
             if item_index != -1 and item_index < len(self.player.backpack):
                 item_to_add = self.player.backpack[item_index]
                 slot_name_to_classname = slot.lower().title()
                 classname = getattr(importlib.import_module("Items"), slot_name_to_classname)
                 if isinstance(item_to_add, classname):
                     self.player.equip_from_bp(slot.lower(), item_to_add)
-                    Util.slow_print(Cfg.get('REPLACEMENT_SUCCESS'))
-                    Util.clear()
+                    Util.slow_print('\n' + Cfg.get('REPLACEMENT_SUCCESS'))
+                    Util.clear_with_enter()
                 else:
-                    Util.slow_print(Cfg.get('WRONG_SLOT'))
-                    Util.clear()
+                    Util.slow_print('\n' + Cfg.get('WRONG_SLOT'))
+                    Util.clear_with_enter()
             else:
-                Util.slow_print(Cfg.get('REPLACEMENT_FAIL'))
-                Util.clear()
+                Util.slow_print('\n' + Cfg.get('REPLACEMENT_FAIL'))
+                Util.clear_with_enter()
                 return False
         else:
             return True
@@ -150,7 +150,7 @@ class Game(object):
 
         name = None
         while (not name):
-            Util.slow_print(Cfg.get('TYPE_IN_NAME'))
+            Util.slow_print(Cfg.get('TYPE_IN_NAME') + ' ', endline=False)
             name = input()
 
         self.player = Player(name, Util.Position(x=0, y=0))
@@ -215,7 +215,7 @@ class Game(object):
                                                                                                         allow_to_flee=False),
                                                                                'I': Events.InfinityMaster(self.player)})
 
-                                ][-1:]
+                                ][-4:]
 
     def step(self):
         Util.clear()
