@@ -203,19 +203,14 @@ class Game(object):
                                                             map_cell_to_event={' ': Events.Blank(self.player),
                                                                                'B': Events.Blank(self.player),
                                                                                'T': Events.MansionTrapdoor(self.player)}),
-                                    GameChapter.GameChapter(self.player, 9, init_player_position=Util.Position(0, 9),
-                                                            map_cell_to_event={' ': Events.Blank(self.player),
-                                                                               'B': Events.Blank(self.player),
-                                                                               'T': Events.MansionTrapdoor(
-                                                                                   self.player)}),
-                                    GameChapter.GameChapter(self.player, 10, init_player_position=Util.Position(1, 9),
+                                    GameChapter.GameChapter(self.player, 9, init_player_position=Util.Position(1, 9),
                                                             map_cell_to_event={' ': Events.Blank(self.player),
                                                                                'P': Events.MonsterFight(self.player,
                                                                                                         Monster.get_phantom,
                                                                                                         allow_to_flee=False),
                                                                                'I': Events.InfinityMaster(self.player)})
 
-                                ][-4:]
+                                ][-1:]
 
     def step(self):
         Util.clear()

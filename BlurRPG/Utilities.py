@@ -13,7 +13,7 @@ class Position:
         self.x = x
         self.y = y
 
-CLEAR_CMD = 'cls'
+CLEAR_CMD = 'clear'
 
 Direction = collections.namedtuple('Direction', 'dx dy')
 

@@ -20,5 +20,10 @@ class Monster(object):
 def get_slime():
     return Monster(strength=4, vitality=100, defence=4, agility=10, name='Slime')
 
+
 def get_phantom():
-    return Monster(strength=10, vitality=10, defence=10, agility=10, name='Phantom')
+    return Monster(strength=10, vitality=25, defence=5, agility=10, name='Phantom')
+
+
+def get_phantom_guardian():
+    return Monster(strength=10, vitality=35, defence=5, agility=11, name='Phantom Guardian')

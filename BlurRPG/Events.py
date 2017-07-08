@@ -6,6 +6,8 @@ import NPC
 from Cfg import Cfg
 import Items
 import Events
+# DEFERRED IMPORT:
+# import dialogs.inf_master
 
 class Event(object):
     def __init__(self, player, disappear_after_run=False):
@@ -32,8 +34,6 @@ class MonsterFight(Event):
 
         self.choice_to_method = {}
 
-        print(monster_init_func)
-        print(monster_init_func())
         self.monster_init_func = monster_init_func
         self.monster = monster_init_func()
         self.allow_to_flee = allow_to_flee
@@ -347,8 +347,56 @@ class InfinityMaster(Event):
     def run(self):
         Util.clear()
 
-        for line in Cfg.getLines('MANSION_BED'):
+        for line in Cfg.getLines('INF_MASTER_WELCOME'):
+            Util.slow_print(line)
+
+        Util.slow_print('')
+
+        import dialogs.inf_master
+        dialogs.inf_master.Conversation(dialogs.inf_master.inf_root, self.player).run()
+
+        self.player.proceed_to_next_chapter = True
+        Util.clear_with_enter()
+
+
+class InfMasterDiceGame(Event):
+    def __init__(self, player):
+        super(InfMasterDiceGame, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        for line in Cfg.getLines('INF_GAME'):
+            Util.slow_print(line)
+
+
+class PhantomGuardianBattle(Event):
+    def __init__(self, player):
+        super(PhantomGuardianBattle, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        MonsterFight(self.player, Monster.get_phantom_guardian, allow_to_flee=False, money_received=15).run()
+
+        self.player.proceed_to_next_chapter = True
+        Util.clear_with_enter()
+
+
+class WakeUp(Event):
+    def __init__(self, player):
+        super(WakeUp, self).__init__(player, disappear_after_run=True)
+
+    def run(self):
+        Util.clear()
+
+        for line in Cfg.getLines('WAKE_UP_INF'):
             Util.slow_print(line)
 
         self.player.proceed_to_next_chapter = True
         Util.clear_with_enter()
+
+
+
+
+
